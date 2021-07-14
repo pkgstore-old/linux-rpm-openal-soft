@@ -11,8 +11,8 @@ Vendor:                         Package Store <https://pkgstore.github.io>
 Packager:                       Kitsune Solar <kitsune.solar@gmail.com>
 
 Source0:                        https://openal-soft.org/openal-releases/openal-soft-%{version}.tar.bz2
-Patch0:                         openal-soft-arm_neon-only-for-32bit.patch
-Patch1:                         openal-soft-fcommon-fix.patch
+# Patch0:                       openal-soft-arm_neon-only-for-32bit.patch
+# Patch1:                       openal-soft-fcommon-fix.patch
 
 BuildRequires:                  make
 BuildRequires:                  alsa-lib-devel
