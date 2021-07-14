@@ -116,7 +116,6 @@ find %{buildroot} -name '*.la' -exec rm -f {} ';'
 
 
 %files devel
-%{_bindir}/makehrtf
 %{_includedir}/*
 %{_libdir}/libopenal.so
 %{_libdir}/pkgconfig/openal.pc
