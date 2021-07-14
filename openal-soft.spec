@@ -123,14 +123,8 @@ find %{buildroot} -name '*.la' -exec rm -f {} ';'
 
 
 %files examples
-%{_bindir}/alhrtf
-%{_bindir}/allatency
 %{_bindir}/alloopback
-%{_bindir}/almultireverb
-%{_bindir}/alplay
 %{_bindir}/alrecord
-%{_bindir}/alreverb
-%{_bindir}/alstream
 %{_bindir}/altonegen
 
 
