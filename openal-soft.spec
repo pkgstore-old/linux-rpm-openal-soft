@@ -1,5 +1,5 @@
-%define __cmake_in_source_build 1
-%global release_prefix          100
+%undefine __cmake_in_source_build
+%global release_prefix          101
 
 Name:                           openal-soft
 Version:                        1.21.1
@@ -11,22 +11,26 @@ Vendor:                         Package Store <https://pkgstore.github.io>
 Packager:                       Kitsune Solar <kitsune.solar@gmail.com>
 
 Source0:                        https://openal-soft.org/openal-releases/openal-soft-%{version}.tar.bz2
-# Patch0:                       openal-soft-arm_neon-only-for-32bit.patch
-# Patch1:                       openal-soft-fcommon-fix.patch
+Patch0:                         openal-soft-arm_neon-only-for-32bit.patch
+Patch1:                         openal-soft-libmysofa-include-fix.patch
 
-BuildRequires:                  make
 BuildRequires:                  alsa-lib-devel
 BuildRequires:                  cmake
 BuildRequires:                  gcc
 BuildRequires:                  gcc-c++
+BuildRequires:                  ninja-build
 %if 0%{?fedora}
 BuildRequires:                  fluidsynth-devel
 BuildRequires:                  portaudio-devel
 %endif
+%if 0%{?fedora} || 0%{?rhel} < 9
+BuildRequires:  SDL_sound-devel
+%endif
+BuildRequires:  libmysofa-devel
+BuildRequires:  libsndfile-devel
 BuildRequires:                  pulseaudio-libs-devel
 BuildRequires:                  qt5-qtbase-devel
 BuildRequires:                  SDL2-devel
-BuildRequires:                  SDL_sound-devel
 Obsoletes:                      openal <= 0.0.10
 Provides:                       openal = %{version}
 
@@ -87,21 +91,24 @@ for configuring OpenAL features.
 
 
 %build
-%cmake -DALSOFT_CPUEXT_NEON:BOOL=OFF .
-%{make_build}
-
+%cmake -G Ninja \
+  -DCMAKE_BUILD_TYPE=Release \
+  -DALSOFT_CPUEXT_NEON:BOOL=OFF \
+  -DALSOFT_EXAMPLES:BOOL=ON \
+  -DALSOFT_UTILS:BOOL=ON \
+  -DALSOFT_INSTALL_CONFIG:BOOL=ON \
+  -DALSOFT_INSTALL_EXAMPLES:BOOL=ON \
+  -DALSOFT_INSTALL_HRTF_DATA:BOOL=ON \
+  -DALSOFT_INSTALL_UTILS:BOOL=ON
+%cmake_build
 
 %install
-%{make_install}
+%cmake_install
 
-
-find %{buildroot} -name '*.la' -exec rm -f {} ';'
 %{__install} -Dpm644 alsoftrc.sample %{buildroot}%{_sysconfdir}/openal/alsoft.conf
 # Don't pin the pulseaudio stream to a specific output device
 %{__sed} -i 's/#allow-moves = false/allow-moves = true/' \
   %{buildroot}%{_sysconfdir}/openal/alsoft.conf
-
-%ldconfig_scriptlets
 
 
 %files
@@ -116,6 +123,7 @@ find %{buildroot} -name '*.la' -exec rm -f {} ';'
 
 
 %files devel
+%{_bindir}/makemhr
 %{_includedir}/*
 %{_libdir}/libopenal.so
 %{_libdir}/pkgconfig/openal.pc
@@ -123,7 +131,15 @@ find %{buildroot} -name '*.la' -exec rm -f {} ';'
 
 
 %files examples
+%if 0%{?fedora} || 0%{?rhel} < 9
+%{_bindir}/alhrtf
+%{_bindir}/allatency
 %{_bindir}/alloopback
+%{_bindir}/almultireverb
+%{_bindir}/alplay
+%{_bindir}/alreverb
+%{_bindir}/alstream
+%endif
 %{_bindir}/alrecord
 %{_bindir}/altonegen
 
@@ -133,6 +149,24 @@ find %{buildroot} -name '*.la' -exec rm -f {} ';'
 
 
 %changelog
+* Mon Mar 28 2022 Package Store <mail@z17.dev> - 1.21.1-101
+- UPD: Rebuild by Package Store.
+
+* Thu Jan 20 2022 Fedora Release Engineering <releng@fedoraproject.org> - 1.21.1-2
+- Rebuilt for https://fedoraproject.org/wiki/Fedora_36_Mass_Rebuild
+
+* Mon Sep 06 2021 Vitaly Zaitsev <vitaly@easycoding.org> - 1.21.1-1
+- Updated to version 1.21.1.
+
+* Wed Aug 04 2021 Wim Taymans <wtaymans@redhat.com> - 1.19.1-15
+- Don't package some examples when SDL_sound is disabled
+
+* Mon Aug 02 2021 Wim Taymans <wtaymans@redhat.com> - 1.19.1-14
+- Only build SDL_sound support on Fedora and rhel < 9
+
+* Thu Jul 22 2021 Fedora Release Engineering <releng@fedoraproject.org> - 1.19.1-13
+- Rebuilt for https://fedoraproject.org/wiki/Fedora_35_Mass_Rebuild
+
 * Wed Jul 14 2021 Package Store <kitsune.solar@gmail.com> - 1.21.1-100
 - UPD: Move to Package Store.
 - UPD: License.
