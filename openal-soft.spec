@@ -1,5 +1,5 @@
 %undefine __cmake_in_source_build
-%global release_prefix          1002
+%global release_prefix          1003
 
 Name:                           openal-soft
 Version:                        1.21.1
@@ -90,7 +90,7 @@ for configuring OpenAL features.
 
 
 %build
-%cmake -G Ninja \
+%{cmake} -G Ninja \
   -DCMAKE_BUILD_TYPE=Release \
   -DALSOFT_CPUEXT_NEON:BOOL=OFF \
   -DALSOFT_EXAMPLES:BOOL=ON \
@@ -99,10 +99,10 @@ for configuring OpenAL features.
   -DALSOFT_INSTALL_EXAMPLES:BOOL=ON \
   -DALSOFT_INSTALL_HRTF_DATA:BOOL=ON \
   -DALSOFT_INSTALL_UTILS:BOOL=ON
-%cmake_build
+%{cmake_build}
 
 %install
-%cmake_install
+%{cmake_install}
 
 %{__install} -Dpm644 alsoftrc.sample %{buildroot}%{_sysconfdir}/openal/alsoft.conf
 # Don't pin the pulseaudio stream to a specific output device.
@@ -148,6 +148,10 @@ for configuring OpenAL features.
 
 
 %changelog
+* Thu Mar 31 2022 Package Store <pkgstore@mail.ru> - 1.21.1-1003
+- UPD: Rebuild by Package Store.
+- UPD: File "openal-soft.spec".
+
 * Thu Mar 31 2022 Package Store <pkgstore@mail.ru> - 1.21.1-1002
 - UPD: Rebuild by Package Store.
 - UPD: File "openal-soft.spec".
