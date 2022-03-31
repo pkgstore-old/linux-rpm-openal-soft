@@ -1,5 +1,5 @@
 %undefine __cmake_in_source_build
-%global release_prefix          101
+%global release_prefix          1002
 
 Name:                           openal-soft
 Version:                        1.21.1
@@ -7,12 +7,11 @@ Release:                        %{release_prefix}%{?dist}
 Summary:                        Open Audio Library
 License:                        LGPLv2+
 URL:                            https://openal-soft.org
-Vendor:                         Package Store <https://pkgstore.github.io>
-Packager:                       Kitsune Solar <kitsune.solar@gmail.com>
 
-Source0:                        https://openal-soft.org/openal-releases/openal-soft-%{version}.tar.bz2
-Patch0:                         openal-soft-arm_neon-only-for-32bit.patch
-Patch1:                         openal-soft-libmysofa-include-fix.patch
+Source0:                        %{name}-%{version}.tar.xz
+
+Patch0:                         %{name}-arm_neon-only-for-32bit.patch
+Patch1:                         %{name}-libmysofa-include-fix.patch
 
 BuildRequires:                  alsa-lib-devel
 BuildRequires:                  cmake
@@ -24,10 +23,10 @@ BuildRequires:                  fluidsynth-devel
 BuildRequires:                  portaudio-devel
 %endif
 %if 0%{?fedora} || 0%{?rhel} < 9
-BuildRequires:  SDL_sound-devel
+BuildRequires:                  SDL_sound-devel
 %endif
-BuildRequires:  libmysofa-devel
-BuildRequires:  libsndfile-devel
+BuildRequires:                  libmysofa-devel
+BuildRequires:                  libsndfile-devel
 BuildRequires:                  pulseaudio-libs-devel
 BuildRequires:                  qt5-qtbase-devel
 BuildRequires:                  SDL2-devel
@@ -106,7 +105,7 @@ for configuring OpenAL features.
 %cmake_install
 
 %{__install} -Dpm644 alsoftrc.sample %{buildroot}%{_sysconfdir}/openal/alsoft.conf
-# Don't pin the pulseaudio stream to a specific output device
+# Don't pin the pulseaudio stream to a specific output device.
 %{__sed} -i 's/#allow-moves = false/allow-moves = true/' \
   %{buildroot}%{_sysconfdir}/openal/alsoft.conf
 
@@ -149,7 +148,11 @@ for configuring OpenAL features.
 
 
 %changelog
-* Mon Mar 28 2022 Package Store <mail@z17.dev> - 1.21.1-101
+* Thu Mar 31 2022 Package Store <pkgstore@mail.ru> - 1.21.1-1002
+- UPD: Rebuild by Package Store.
+- UPD: File "openal-soft.spec".
+
+* Mon Mar 28 2022 Package Store <pkgstore@mail.ru> - 1.21.1-101
 - UPD: Rebuild by Package Store.
 
 * Thu Jan 20 2022 Fedora Release Engineering <releng@fedoraproject.org> - 1.21.1-2
@@ -166,10 +169,6 @@ for configuring OpenAL features.
 
 * Thu Jul 22 2021 Fedora Release Engineering <releng@fedoraproject.org> - 1.19.1-13
 - Rebuilt for https://fedoraproject.org/wiki/Fedora_35_Mass_Rebuild
-
-* Wed Jul 14 2021 Package Store <kitsune.solar@gmail.com> - 1.21.1-100
-- UPD: Move to Package Store.
-- UPD: License.
 
 * Tue Jan 26 2021 Fedora Release Engineering <releng@fedoraproject.org> - 1.19.1-12
 - Rebuilt for https://fedoraproject.org/wiki/Fedora_34_Mass_Rebuild
